@@ -1,6 +1,6 @@
 ;;; evil-nerd-commenter-operator.el --- Provides an evil operator for evil-nerd-commenter
 
-;; Copyright (C) 2013-2015, Chen Bin
+;; Copyright (C) 2013-2017, Chen Bin
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
@@ -83,6 +83,41 @@
       ;; actual comment operatio should happen at last
       ;; or else beg end will be screwed up
       (comment-region beg end))))
+
+
+(defun evilnc-get-comment-bounds ()
+  (cons 0 15))
+
+;;;###autoload
+(evil-define-text-object evilnc-inner-comment (&optional count begin end type)
+  "An inner comment text object."
+  (let* ((bounds (evilnc-get-comment-bounds)))
+    (cond
+     (bounds
+      (let* ((b (save-excursion
+                  (goto-char (car bounds))
+                  (forward-word 1)
+                  (forward-word -1)
+                  (point)))
+             (e (save-excursion
+                  (goto-char (cdr bounds))
+                  (evil-end-of-line)
+                  (point))))
+        (evil-range b e 'block :expanded t)))
+     (t
+      (error "Not inside a comment.")))))
+
+;;;###autoload
+(evil-define-text-object evilnc-outer-commenter (&optional count begin end type)
+  "An outer comment text object."
+  (let* ((bounds (evilnc-get-comment-bounds)))
+    (cond
+     (bounds
+      (let* ((b (car bounds))
+             (e (cdr bounds)))
+        (evil-range b e 'exclusive :expanded t)))
+     (t
+      (error "Not inside a comment.")))))
 
 (provide 'evil-nerd-commenter-operator)
 ;;; evil-nerd-commenter-operator.el ends here

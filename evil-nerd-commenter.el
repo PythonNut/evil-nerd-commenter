@@ -1,6 +1,6 @@
 ;;; evil-nerd-commenter.el --- Comment/uncomment lines efficiently. Like Nerd Commenter in Vim
 
-;; Copyright (C) 2013-2016, Chen Bin
+;; Copyright (C) 2013-2017, Chen Bin
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
@@ -699,10 +699,15 @@ If NO-EVIL-KEYBINDINGS is t, we don't define keybindings in evil-mode."
     ;; Install operator for evil text objects
     (eval-after-load 'evil-nerd-commenter-operator
       '(progn
+         ;; operator to comment at text objects
          (define-key evil-normal-state-map ",." 'evilnc-copy-and-comment-operator)
          (define-key evil-visual-state-map ",." 'evilnc-copy-and-comment-operator)
          (define-key evil-normal-state-map ",," 'evilnc-comment-operator)
-         (define-key evil-visual-state-map ",," 'evilnc-comment-operator)))))
+         (define-key evil-visual-state-map ",," 'evilnc-comment-operator)
+
+         ;; comment itself is text object
+         (define-key evil-inner-text-objects-map "c" 'evilnc-inner-comment)
+         (define-key evil-outer-text-objects-map "c" 'evilnc-outer-commenter)))))
 
 ;; Attempt to define the operator on first load.
 ;; Will only work if evil has been loaded
